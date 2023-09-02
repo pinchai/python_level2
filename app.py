@@ -12,8 +12,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/')
 @app.route('/home')
 def home():
-    user_agent = request.headers.get('User-Agent')
-    # return '<h1 style="color: red">Hello From Flask</h1>'
     product_list = [
         {
             'name': 'COCA COLA',
@@ -43,7 +41,7 @@ def home():
             'image': 'string_yellow.jpeg',
         }
     ]
-    for count in range(50):
+    for count in range(7):
         product_list.append(
             {
                 'name': 'COCA COLA',
@@ -58,9 +56,13 @@ def home():
     return render_template('index.html', product_list=product_list)
 
 
-@app.route('/product_detail')
-def product_details():
-    return render_template('detail.html')
+@app.route('/product_detail/<float:price>')
+def product_details(price):
+
+    # name = request.args.get("name", default="all", type=str)
+    # price = request.args.get("price", default=0, type=float)
+
+    return render_template('detail.html', price=price)
 
 
 @app.route('/add_product_index')
@@ -88,6 +90,12 @@ def add_product():
            f"<p>filename:{filename}</p>"
 
 
+@app.route('/template')
+def template():
+    name = "SS3.4"
+    return render_template('jinja.html', name=name)
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -95,8 +103,7 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    # return render_template('500.html'), 500
-    return '500.html', 500
+    return render_template('500.html'), 500
 
 
 if __name__ == '__main__':

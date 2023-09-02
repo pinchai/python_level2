@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+{#<style>#}
+{#    body{#}
+{#        background-color: blue;#}
+{#        color: whitesmoke;#}
+{#    }#}
+{#</style>#}
+<body>
+<h1 style="text-decoration: underline">{{ "SS34" }}</h1>
+<h1>{{ name }}</h1>
+{% for item in range(100) %}
+    <h1>{{ loop.index }}. {{ "Hello" }} {{ "World" }}</h1>
+{% endfor %}
+</body>
+</html>
