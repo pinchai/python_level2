@@ -1,12 +1,84 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, Response, url_for
 from werkzeug.utils import secure_filename
 import os
+import pdfkit
+import xlsxwriter
+import requests
+from datetime import datetime
+
 
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static', 'product')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+@app.route("/pdf")
+def index_pdf():
+    path = os.getcwd() + '/pdf/invoice.pdf'
+    if not os.path.exists(path):
+        os.makedirs(os.getcwd() + '/pdf')
+
+    data = [
+        {'id': 1, 'name': 'កូកាកូឡា', 'qty': 20, 'price': 0.25},
+        {'id': 1, 'name': 'sting', 'qty': 10, 'price': 0.25},
+        {'id': 1, 'name': 'abc', 'qty': 3, 'price': 25},
+    ]
+    now = datetime.now()
+    created_at = now.strftime("%Y-%m-%d %H:%M")
+    server_url = request.url_root
+    html = render_template("invoice.html", data=data, now=created_at, server_url=server_url)
+    options = {
+        # 'page-size': 'a7',
+        'page-height': '7in',
+        'page-width': '3in',
+        'margin-top': '0.1in',
+        'margin-right': '0in',
+        'margin-bottom': '0.1in',
+        'margin-left': '0in',
+    }
+    pdf = pdfkit.from_string(html, path, options)
+    pdf_preview = pdfkit.from_string(html, '', options)
+
+    return Response(pdf_preview, mimetype="application/pdf")
+
+
+@app.route('/excel')
+def excel():
+    # Cretae a xlsx file
+    xlsxFile = xlsxwriter.Workbook('demo.xlsx')
+
+    # Add new worksheet
+    sheetOne = xlsxFile.add_worksheet("SheetOne")
+
+    # Create List for write data into xlsx file
+    data = [
+        {"ID": 1, "Name": "ពិនឆៃ", "Email": "chai@gmail.com"},
+        {"ID": 2, "Name": "ធារ៉ា", "Email": "theara@gmail.com"},
+        {"ID": 3, "Name": "ពិសី", "Email": "pisey@gmail.com"}
+    ]
+
+    row = 1
+    column = 0
+
+    # Set Header for xlsx file(SheetONE)
+    sheetOne.write(0, 0, "ល.រ")
+    sheetOne.write(0, 1, "ឈ្មោះ")
+    sheetOne.write(0, 2, "Email")
+
+    # write into the worksheet
+    for item in data:
+        # write operation perform(SheetOne)
+        sheetOne.write(row, 0, item["ID"])
+        sheetOne.write(row, 1, item["Name"])
+        sheetOne.write(row, 2, item["Email"])
+
+        # incrementing the value of row by one
+        row += 1
+
+    # Close the Excel file
+    xlsxFile.close()
 
 
 @app.route('/')
