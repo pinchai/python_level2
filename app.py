@@ -5,9 +5,6 @@ import pdfkit
 import xlsxwriter
 import requests
 from datetime import datetime
-import webview
-import sys
-import threading
 
 
 app = Flask(__name__)
@@ -181,17 +178,13 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
-def start_server():
-    app.run(host='0.0.0.0', port=5050)
-
-
 if __name__ == '__main__':
-    t = threading.Thread(target=start_server)
-    t.daemon = True
-    t.start()
+    # t = threading.Thread(target=start_server)
+    # t.daemon = True
+    # t.start()
+    #
+    # webview.create_window("mini POS", "http://127.0.0.1:5050/pdf")
+    # webview.start()
+    # sys.exit()
 
-    webview.create_window("mini POS", "http://127.0.0.1:5050/pdf")
-    webview.start()
-    sys.exit()
-
-    # app.run()
+    app.run()
